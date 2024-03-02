@@ -1,0 +1,42 @@
+import requests
+from bs4 import BeautifulSoup
+
+class CurrencyConverter:
+    def __init__(self, currency_amount):
+        self.currency_amount = currency_amount
+
+    def get_usd_exchange_rate(self):
+        url = "https://example.com"  # Замените на URL сайта национального банка вашей страны
+        response = requests.get(url)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            # Найдите и извлеките информацию о курсе доллара США с помощью селекторов CSS или XPath
+            # Пример:
+            usd_exchange_rate_element = soup.find('div', {'class': 'usd-rate'})
+            if usd_exchange_rate_element:
+                usd_exchange_rate = float(usd_exchange_rate_element.text.strip())
+                return usd_exchange_rate
+        return None
+
+    def convert_to_usd(self):
+        exchange_rate = self.get_usd_exchange_rate()
+        if exchange_rate:
+            usd_amount = self.currency_amount / exchange_rate
+            return usd_amount
+        else:
+            return None
+
+# Получаем количество валюты от пользователя
+currency_amount = float(input("Введите количество валюты вашей страны: "))
+
+# Создаем экземпляр класса конвертера валюты
+converter = CurrencyConverter(currency_amount)
+
+# Конвертируем валюту в доллары США
+usd_amount = converter.convert_to_usd()
+
+# Выводим результат на экран
+if usd_amount:
+    print(f"Сумма в долларах США: {usd_amount}")
+else:
+    print("Не удалось получить информацию о курсе доллара США.")
